@@ -1,0 +1,35 @@
+{
+  "theme": "light",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "command": "/path/to/Claude_traffic/hw_light.py UserPromptSubmit"
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "command": "/path/to/Claude_traffic/hw_light.py PermissionRequest"
+      }
+    ],
+    "Notification": [
+      {
+        "command": "/path/to/Claude_traffic/hw_light.py Notification"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "command": "/path/to/Claude_traffic/hw_light.py PreToolUse"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "command": "/path/to/Claude_traffic/hw_light.py PostToolUse"
+      }
+    ],
+    "Stop": [
+      {
+        "command": "/path/to/Claude_traffic/hw_light.py Stop"
+      }
+    ]
+  }
+}

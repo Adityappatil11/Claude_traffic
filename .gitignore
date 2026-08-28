@@ -1,0 +1,22 @@
+# Aider cache & history
+.aider*
+.aider.tags.cache.v4/
+
+# Build artifacts & binaries
+build/
+*.bin
+*.elf
+*.map
+*.hex
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Local notes & office lockfiles
+*.odt
+.~lock.*#
+
+# OS & Editor files
+.DS_Store
+.vscode/
