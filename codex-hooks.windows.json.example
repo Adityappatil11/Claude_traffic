@@ -1,0 +1,9 @@
+{
+  "hooks": {
+    "SessionStart": [{"command": "py -3 \"C:\\Users\\YOUR_NAME\\Claude_traffic\\hw_light.py\" SessionStart", "timeoutSec": 2}],
+    "PreToolUse": [{"command": "py -3 \"C:\\Users\\YOUR_NAME\\Claude_traffic\\hw_light.py\" PreToolUse", "timeoutSec": 2}],
+    "PostToolUse": [{"command": "py -3 \"C:\\Users\\YOUR_NAME\\Claude_traffic\\hw_light.py\" PostToolUse", "timeoutSec": 2}],
+    "Interrupt": [{"command": "py -3 \"C:\\Users\\YOUR_NAME\\Claude_traffic\\hw_light.py\" Interrupt", "timeoutSec": 2}],
+    "SessionEnd": [{"command": "py -3 \"C:\\Users\\YOUR_NAME\\Claude_traffic\\hw_light.py\" SessionEnd", "timeoutSec": 2}]
+  }
+}

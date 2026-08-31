@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [{"hooks": [{"type": "command", "command": "py -3 \"C:\\Users\\YOUR_NAME\\Claude_traffic\\hw_light.py\" UserPromptSubmit"}]}],
+    "PermissionRequest": [{"hooks": [{"type": "command", "command": "py -3 \"C:\\Users\\YOUR_NAME\\Claude_traffic\\hw_light.py\" PermissionRequest"}]}],
+    "Notification": [{"hooks": [{"type": "command", "command": "py -3 \"C:\\Users\\YOUR_NAME\\Claude_traffic\\hw_light.py\" Notification"}]}],
+    "PreToolUse": [{"hooks": [{"type": "command", "command": "py -3 \"C:\\Users\\YOUR_NAME\\Claude_traffic\\hw_light.py\" PreToolUse"}]}],
+    "PostToolUse": [{"hooks": [{"type": "command", "command": "py -3 \"C:\\Users\\YOUR_NAME\\Claude_traffic\\hw_light.py\" PostToolUse"}]}],
+    "Stop": [{"hooks": [{"type": "command", "command": "py -3 \"C:\\Users\\YOUR_NAME\\Claude_traffic\\hw_light.py\" Stop"}]}]
+  }
+}

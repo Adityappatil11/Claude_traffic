@@ -96,14 +96,18 @@ Get-CimInstance Win32_SerialPort | Select-Object DeviceID, Description
 
 ---
 
-### 3. Compile & Flash the Firmware
+### 3. Configure, Compile & Flash the Firmware
 
-1. Open `firmware/firmware.ino` and enter your 2.4 GHz Wi-Fi credentials:
+1. Open `firmware/firmware.ino` and enter the two 2.4 GHz Wi-Fi profiles:
 ```cpp
-const char* ssid     = "YOUR_WIFI_SSID";
-const char* password = "YOUR_WIFI_PASSWORD";
+WifiCredential wifiCredentials[] = {
+  {"Vishwa", "YOUR_PASSWORD", IPAddress(192, 168, 0, 200), IPAddress(192, 168, 0, 1)},
+  {"Gramle_Jio", "YOUR_PASSWORD", IPAddress(192, 168, 31, 200), IPAddress(192, 168, 31, 1)}
+};
 
 ```
+
+The ESP8266 tries the profiles in order. It uses `192.168.0.200` on Vishwa and `192.168.31.200` on Gramle_Jio.
 
 
 2. Compile the binary:
@@ -133,7 +137,7 @@ python -m esptool --port COM3 --baud 115200 --no-stub --before no-reset --after 
 
 ---
 
-### 4. Monitor Serial Output & Get Board IP
+### 4. Monitor Serial Output
 
 1. **Press the `RST` button** on your NodeMCU once to start the firmware.
 2. Open the serial monitor:
@@ -150,7 +154,8 @@ python -m serial.tools.miniterm COM3 115200
 3. Watch the terminal for your Wi-Fi confirmation:
 ```text
 WiFi Connected!
-NodeMCU IP Address: 192.168.0.5
+Connected SSID: Vishwa
+NodeMCU Fixed IP Address: 192.168.0.200
 
 ```
 
@@ -159,43 +164,113 @@ NodeMCU IP Address: 192.168.0.5
 
 ---
 
-### 5. Configure Claude Code Hooks
+### 5. Configure the Light Sender and Hooks
 
-1. Open `hw_light.py` and set your NodeMCU's assigned IP:
-```python
-ESP32_IP = "192.168.0.5"
+`hw_light.py` sends every light command to both saved ESP8266 addresses. No per-PC IP edit is needed.
 
-```
+| Wi-Fi | ESP8266 address |
+| :--- | :--- |
+| Vishwa | `192.168.0.200` |
+| Gramle_Jio | `192.168.31.200` |
 
+The computer only needs to be connected to either Wi-Fi network.
 
-2. Make the hook script executable:
+#### Linux
+
 ```bash
-chmod +x hw_light.py
+chmod +x /path/to/Claude_traffic/hw_light.py
 
-```
-
-
-3. Copy the example configuration to your Claude settings:
-```bash
+# Claude Code: only copies when no settings file exists
 mkdir -p ~/.claude
-cp settings.json.example ~/.claude/settings.json
+test -e ~/.claude/settings.json || cp settings.json.example ~/.claude/settings.json
 
+# Codex: only copies when no hooks file exists
+mkdir -p ~/.codex
+test -e ~/.codex/hooks.json || cp codex-hooks.json.example ~/.codex/hooks.json
 ```
 
+Replace `/media/aditya/STUDY/projects/Claude_traffic` in the example JSON if your project is in a different folder. Use `.claude/settings.json` or `.codex/hooks.json` in a repository instead when hooks should only apply to that repository. Restart Claude Code or Codex after changing its settings.
 
-*(Update `/path/to/Claude_traffic/hw_light.py` inside `~/.claude/settings.json` with the absolute path to your script).*
+#### Windows (PowerShell)
+
+1. Install Python 3 and check that the launcher works:
+
+```powershell
+py -3 --version
+```
+
+2. Copy this project to a stable path, such as `C:\Users\YOUR_NAME\Claude_traffic`.
+
+3. Replace every `YOUR_NAME` in [settings.windows.json.example](settings.windows.json.example), then merge it into:
+
+```text
+C:\Users\YOUR_NAME\.claude\settings.json
+```
+
+4. Replace every `YOUR_NAME` in [codex-hooks.windows.json.example](codex-hooks.windows.json.example), then copy it to:
+
+```text
+C:\Users\YOUR_NAME\.codex\hooks.json
+```
+
+Restart Claude Code or Codex after saving. Codex may ask you to trust the hook the first time it runs.
 
 ---
 
-### 6. Testing
+### 6. Manual Testing
 
-* **Hardware Testbench (No Claude required):**
+These tests do not require Claude Code or Codex. They send the same UDP commands that the hooks send.
+
+#### Linux
+
+Run these from the project directory:
+
 ```bash
-python3 simulate_claude.py
+# Yellow: prompt / attention needed
+python3 hw_light.py UserPromptSubmit
 
+# Blue: tool running
+python3 hw_light.py PreToolUse
+
+# Red: interrupt / context warning
+python3 hw_light.py Interrupt
+
+# Off: session complete
+python3 hw_light.py Stop
+
+# Guided sequence: Yellow -> Blue -> Off, plus manual colour selection
+python3 simulate_claude.py
 ```
 
+#### Windows (PowerShell)
 
-* **With Aider (Open Source coding assistant):**
+Open PowerShell in the project directory:
+
+```powershell
+# Yellow: prompt / attention needed
+py -3 .\hw_light.py UserPromptSubmit
+
+# Blue: tool running
+py -3 .\hw_light.py PreToolUse
+
+# Red: interrupt / context warning
+py -3 .\hw_light.py Interrupt
+
+# Off: session complete
+py -3 .\hw_light.py Stop
+
+# Guided sequence: Yellow -> Blue -> Off, plus manual colour selection
+py -3 .\simulate_claude.py
+```
+
+If the light does not change, confirm the PC is connected to the same Wi-Fi as the board, then ping the active address:
+
 ```bash
-./aider_light.py
+# Linux: use 192.168.31.200 when connected to Gramle_Jio
+ping -c 1 192.168.0.200
+```
+
+```powershell
+# Windows: use 192.168.31.200 when connected to Gramle_Jio
+ping 192.168.0.200
+```

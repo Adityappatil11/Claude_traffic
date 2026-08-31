@@ -3,32 +3,62 @@
   "hooks": {
     "UserPromptSubmit": [
       {
-        "command": "/path/to/Claude_traffic/hw_light.py UserPromptSubmit"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py UserPromptSubmit"
+          }
+        ]
       }
     ],
     "PermissionRequest": [
       {
-        "command": "/path/to/Claude_traffic/hw_light.py PermissionRequest"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py PermissionRequest"
+          }
+        ]
       }
     ],
     "Notification": [
       {
-        "command": "/path/to/Claude_traffic/hw_light.py Notification"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py Notification"
+          }
+        ]
       }
     ],
     "PreToolUse": [
       {
-        "command": "/path/to/Claude_traffic/hw_light.py PreToolUse"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py PreToolUse"
+          }
+        ]
       }
     ],
     "PostToolUse": [
       {
-        "command": "/path/to/Claude_traffic/hw_light.py PostToolUse"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py PostToolUse"
+          }
+        ]
       }
     ],
     "Stop": [
       {
-        "command": "/path/to/Claude_traffic/hw_light.py Stop"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py Stop"
+          }
+        ]
       }
     ]
   }
