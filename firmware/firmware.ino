@@ -2,8 +2,25 @@
 #include <WiFiUdp.h>
 
 // Wi-Fi Credentials (2.4 GHz only)
-const char* ssid     = "YOUR_WIFI_SSID";
-const char* password = "YOUR_WIFI_PASSWORD";
+struct WifiCredential {
+  const char* ssid;
+  const char* password;
+  IPAddress localIP;
+  IPAddress gateway;
+};
+
+WifiCredential wifiCredentials[] = {
+  {"Vishwa", "vishwa@21062002", IPAddress(192, 168, 0, 200), IPAddress(192, 168, 0, 1)},
+  {"Gramle_Jio", "Appu@123", IPAddress(192, 168, 31, 200), IPAddress(192, 168, 31, 1)}
+};
+
+const int wifiCredentialCount = sizeof(wifiCredentials) / sizeof(wifiCredentials[0]);
+const unsigned long wifiConnectTimeoutMs = 15000;
+
+// Shared network settings
+IPAddress subnet(255, 255, 255, 0);     // Subnet mask
+IPAddress primaryDNS(8, 8, 8, 8);       // Optional DNS
+IPAddress secondaryDNS(8, 8, 4, 4);
 
 WiFiUDP udp;
 const unsigned int localUdpPort = 4210;
@@ -26,9 +43,16 @@ void setLEDs(bool red, bool yellow, bool blue) {
 
 // Helper tone functions (works for both active and passive buzzers)
 void shortBeep() {
-  digitalWrite(PIN_BUZZER, HIGH);
-  delay(120);
-  digitalWrite(PIN_BUZZER, LOW);
+  for(int i=0;i<3;i++)
+  {
+    digitalWrite(PIN_BUZZER, HIGH);
+    delay(120);
+    digitalWrite(PIN_BUZZER, LOW);
+    if(i<2)
+    {
+      delay(100);
+    }
+  }
 }
 
 void longBeep() {
@@ -59,6 +83,43 @@ void updateLED() {
   }
 }
 
+bool connectToWiFi() {
+  WiFi.mode(WIFI_STA);
+
+  for (int i = 0; i < wifiCredentialCount; i++) {
+    Serial.print("\nConnecting to Wi-Fi: ");
+    Serial.println(wifiCredentials[i].ssid);
+
+    WiFi.disconnect();
+    delay(200);
+
+    // Configure this Wi-Fi's Static IP before connecting
+    if (!WiFi.config(wifiCredentials[i].localIP, wifiCredentials[i].gateway, subnet, primaryDNS, secondaryDNS)) {
+      Serial.println("Failed to configure Static IP");
+    }
+
+    WiFi.begin(wifiCredentials[i].ssid, wifiCredentials[i].password);
+
+    unsigned long startedAt = millis();
+    while (WiFi.status() != WL_CONNECTED && millis() - startedAt < wifiConnectTimeoutMs) {
+      setLEDs(false, true, false); delay(200);
+      setLEDs(false, false, false); delay(200);
+      Serial.print(".");
+    }
+
+    if (WiFi.status() == WL_CONNECTED) {
+      Serial.println("\nWiFi Connected!");
+      Serial.print("Connected SSID: ");
+      Serial.println(wifiCredentials[i].ssid);
+      return true;
+    }
+
+    Serial.println("\nWiFi not connected, trying next saved network...");
+  }
+
+  return false;
+}
+
 void setup() {
   Serial.begin(115200);
 
@@ -75,18 +136,13 @@ void setup() {
   setLEDs(false, false, false);
   shortBeep();
 
-  Serial.print("\nConnecting to Wi-Fi: ");
-  Serial.println(ssid);
-  WiFi.begin(ssid, password);
-
-  while (WiFi.status() != WL_CONNECTED) {
-    setLEDs(false, true, false); delay(200);
-    setLEDs(false, false, false); delay(200);
-    Serial.print(".");
+  while (!connectToWiFi()) {
+    Serial.println("No saved Wi-Fi connected. Retrying all networks in 5 seconds...");
+    setLEDs(true, true, false);
+    delay(5000);
   }
 
-  Serial.println("\nWiFi Connected!");
-  Serial.print("NodeMCU IP Address: ");
+  Serial.print("NodeMCU Fixed IP Address: ");
   Serial.println(WiFi.localIP());
 
   // Two quick blinks and double beep to confirm connection

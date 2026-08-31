@@ -2,9 +2,10 @@
 import sys
 import json
 import socket
+import os
 
 # Put the IP printed in your Serial Monitor here:
-ESP32_IP = os.getenv("CLAUDE_LIGHT_IP", "192.168.X.XXX")
+ESP32_IP = os.getenv("CLAUDE_LIGHT_IP", "192.168.0.16")
 UDP_PORT = 4210
 
 def send_udp(cmd_char):
