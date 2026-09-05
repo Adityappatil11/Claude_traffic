@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "esp8266-traffic-light": {
+      "command": "py",
+      "args": [
+        "-3",
+        "C:\\Users\\YOUR_NAME\\Claude_traffic\\claude_desktop\\traffic_light_mcp.py"
+      ],
+      "env": {
+        "ESP8266_LIGHT_IPS": "192.168.0.200,192.168.31.200"
+      }
+    }
+  }
+}

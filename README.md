@@ -221,6 +221,28 @@ Restart Claude Code or Codex after saving. Codex may ask you to trust the hook t
 
 These tests do not require Claude Code or Codex. They send the same UDP commands that the hooks send.
 
+### Claude Desktop on Windows (experimental)
+
+Claude Desktop does not expose Claude Code lifecycle hooks. The included log
+watcher can infer activity from local Desktop logs, but log wording can change
+between Claude releases.
+
+```powershell
+# Show the Claude Desktop logs detected on this PC
+py -3 .\claude_desktop_watcher.py --discover
+
+# First test without sending anything to the hardware. Send a Claude message
+# while this is running and inspect the detected colour events/log wording.
+py -3 .\claude_desktop_watcher.py --dry-run --verbose
+
+# Run the traffic-light watcher
+py -3 .\claude_desktop_watcher.py
+```
+
+The watcher checks both the classic `%APPDATA%\Claude\logs` location and the
+Microsoft Store/MSIX package location. If automatic discovery misses the active
+log, pass it explicitly with `--log-file "C:\path\to\claude.ai-web.log"`.
+
 #### Linux
 
 Run these from the project directory:
@@ -273,4 +295,194 @@ ping -c 1 192.168.0.200
 ```powershell
 # Windows: use 192.168.31.200 when connected to Gramle_Jio
 ping 192.168.0.200
+```
+
+---
+
+### 7. Claude Desktop Setup (Manual MCP Light Controls)
+
+Claude Desktop does not provide Claude Code lifecycle hooks. Instead, this project includes a local MCP server that gives Claude Desktop tools to control the light on request:
+
+| Tool | Action |
+| :--- | :--- |
+| `light_test` | Sends yellow as a quick connectivity test |
+| `light_yellow` | Turns on yellow |
+| `light_blue` | Turns on blue |
+| `light_red` | Turns on red |
+| `light_off` | Turns all LEDs off |
+| `set_light` | Accepts `yellow`, `blue`, `red`, or `off` |
+
+You do **not** need an `.mcpb` file for this manual setup. The `.mcpb` file is only needed when using Claude Desktop's **Settings -> Extensions -> Advanced settings -> Install Extension...** flow.
+
+The MCP server sends every command to both ESP8266 addresses:
+
+```text
+192.168.0.200
+192.168.31.200
+```
+
+That means the same Claude Desktop config can work whether the computer is connected to the Vishwa Wi-Fi or the Gramle_Jio Wi-Fi.
+
+#### Windows
+
+1. Open PowerShell and go to the project directory:
+
+```powershell
+cd C:\Users\graml\Downloads\Claude_traffic
+```
+
+If you keep the project somewhere else, use that folder instead.
+
+2. Install the MCP dependency:
+
+```powershell
+py -3 -m pip install -r .\claude_desktop\requirements.txt
+```
+
+3. Confirm the MCP server can start:
+
+```powershell
+py -3 .\claude_desktop\traffic_light_mcp.py
+```
+
+The command may wait silently because Claude Desktop normally talks to it over standard input/output. Press `Ctrl+C` to stop it after confirming there is no startup error.
+
+4. Open the Claude Desktop config file:
+
+```powershell
+notepad "$env:APPDATA\Claude\claude_desktop_config.json"
+```
+
+If the file does not exist, create it.
+
+5. Add or merge this config. If the file already has other MCP servers, only add the `esp8266-traffic-light` entry inside `mcpServers`.
+
+```json
+{
+  "mcpServers": {
+    "esp8266-traffic-light": {
+      "command": "py",
+      "args": [
+        "-3",
+        "C:\\Users\\graml\\Downloads\\Claude_traffic\\claude_desktop\\traffic_light_mcp.py"
+      ],
+      "env": {
+        "ESP8266_LIGHT_IPS": "192.168.0.200,192.168.31.200"
+      }
+    }
+  }
+}
+```
+
+6. Fully quit Claude Desktop and reopen it.
+
+7. Start a chat and ask:
+
+```text
+Use the esp8266 traffic light tool and run light_test.
+```
+
+The yellow light should turn on. Claude Desktop may ask you to approve the tool the first time.
+
+#### macOS
+
+1. Copy the project to your Mac and install the MCP dependency:
+
+```bash
+cd /Users/YOUR_NAME/Claude_traffic
+python3 -m pip install -r claude_desktop/requirements.txt
+```
+
+2. Open or create Claude Desktop's config file:
+
+```bash
+open "$HOME/Library/Application Support/Claude/claude_desktop_config.json"
+```
+
+If `open` does not create the file, make the folder and file manually:
+
+```bash
+mkdir -p "$HOME/Library/Application Support/Claude"
+touch "$HOME/Library/Application Support/Claude/claude_desktop_config.json"
+```
+
+3. Add or merge this config. Replace `YOUR_NAME` with your macOS user name:
+
+```json
+{
+  "mcpServers": {
+    "esp8266-traffic-light": {
+      "command": "python3",
+      "args": [
+        "/Users/YOUR_NAME/Claude_traffic/claude_desktop/traffic_light_mcp.py"
+      ],
+      "env": {
+        "ESP8266_LIGHT_IPS": "192.168.0.200,192.168.31.200"
+      }
+    }
+  }
+}
+```
+
+4. Fully quit Claude Desktop and reopen it.
+
+5. In a chat, ask:
+
+```text
+Use the esp8266 traffic light tool and run light_test.
+```
+
+#### Linux Testing
+
+Claude Desktop support on Linux depends on the installation channel/version. You can still test the MCP server itself from this repository:
+
+```bash
+cd /media/aditya/STUDY/projects/Claude_traffic
+python3 -m pip install -r claude_desktop/requirements.txt
+python3 claude_desktop/traffic_light_mcp.py
+```
+
+Press `Ctrl+C` after confirming the server starts.
+
+Use this config shape if your Claude Desktop build exposes a local MCP config file:
+
+```json
+{
+  "mcpServers": {
+    "esp8266-traffic-light": {
+      "command": "python3",
+      "args": [
+        "/media/aditya/STUDY/projects/Claude_traffic/claude_desktop/traffic_light_mcp.py"
+      ],
+      "env": {
+        "ESP8266_LIGHT_IPS": "192.168.0.200,192.168.31.200"
+      }
+    }
+  }
+}
+```
+
+The ready-made examples are also included here:
+
+| Platform | Example file |
+| :--- | :--- |
+| macOS | [claude_desktop_config.macos.example.json](claude_desktop/claude_desktop_config.macos.example.json) |
+| Windows | [claude_desktop_config.windows.example.json](claude_desktop/claude_desktop_config.windows.example.json) |
+
+#### Troubleshooting
+
+If Claude Desktop does not show the tool, check these first:
+
+1. Restart Claude Desktop after changing `claude_desktop_config.json`.
+2. Confirm Python works from the same terminal: `py -3 --version` on Windows or `python3 --version` on macOS/Linux.
+3. Confirm the MCP package is installed: `py -3 -m pip show mcp` or `python3 -m pip show mcp`.
+4. Confirm the path in `args` points to the real `traffic_light_mcp.py` location.
+5. Confirm the ESP8266 is on either `192.168.0.200` or `192.168.31.200`.
+
+For automatic Claude Desktop activity detection on Windows, you can also try the experimental log watcher:
+
+```powershell
+py -3 .\claude_desktop_watcher.py --discover
+py -3 .\claude_desktop_watcher.py --dry-run --verbose
+py -3 .\claude_desktop_watcher.py
 ```

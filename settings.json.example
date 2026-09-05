@@ -6,17 +6,26 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py UserPromptSubmit"
+            "command": "python3",
+            "args": [
+              "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py",
+              "UserPromptSubmit"
+            ]
           }
         ]
       }
     ],
     "PermissionRequest": [
       {
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py PermissionRequest"
+            "command": "python3",
+            "args": [
+              "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py",
+              "PermissionRequest"
+            ]
           }
         ]
       }
@@ -26,27 +35,41 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py Notification"
+            "command": "python3",
+            "args": [
+              "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py",
+              "Notification"
+            ]
           }
         ]
       }
     ],
     "PreToolUse": [
       {
+        "matcher": ".*",
         "hooks": [
           {
             "type": "command",
-            "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py PreToolUse"
+            "command": "python3",
+            "args": [
+              "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py",
+              "PreToolUse"
+            ]
           }
         ]
       }
     ],
     "PostToolUse": [
       {
+        "matcher": ".*",
         "hooks": [
           {
             "type": "command",
-            "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py PostToolUse"
+            "command": "python3",
+            "args": [
+              "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py",
+              "PostToolUse"
+            ]
           }
         ]
       }
@@ -56,7 +79,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py Stop"
+            "command": "python3",
+            "args": [
+              "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py",
+              "Stop"
+            ]
           }
         ]
       }

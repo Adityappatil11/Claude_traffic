@@ -1,33 +1,99 @@
 {
+  "description": "ESP8266 traffic-light lifecycle hooks for Codex Desktop.",
   "hooks": {
     "SessionStart": [
       {
-        "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py SessionStart",
-        "timeoutSec": 2
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /media/aditya/STUDY/projects/Claude_traffic/hw_light.py SessionStart",
+            "statusMessage": "Turning light blue",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /media/aditya/STUDY/projects/Claude_traffic/hw_light.py UserPromptSubmit",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /media/aditya/STUDY/projects/Claude_traffic/hw_light.py PermissionRequest",
+            "statusMessage": "Waiting for permission",
+            "timeout": 2
+          }
+        ]
       }
     ],
     "PreToolUse": [
       {
-        "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py PreToolUse",
-        "timeoutSec": 2
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /media/aditya/STUDY/projects/Claude_traffic/hw_light.py PreToolUse",
+            "statusMessage": "Turning light blue",
+            "timeout": 2
+          }
+        ]
       }
     ],
     "PostToolUse": [
       {
-        "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py PostToolUse",
-        "timeoutSec": 2
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /media/aditya/STUDY/projects/Claude_traffic/hw_light.py PostToolUse",
+            "timeout": 2
+          }
+        ]
       }
     ],
     "Interrupt": [
       {
-        "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py Interrupt",
-        "timeoutSec": 2
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /media/aditya/STUDY/projects/Claude_traffic/hw_light.py Interrupt",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /media/aditya/STUDY/projects/Claude_traffic/hw_light.py Stop",
+            "timeout": 2
+          }
+        ]
       }
     ],
     "SessionEnd": [
       {
-        "command": "/media/aditya/STUDY/projects/Claude_traffic/hw_light.py SessionEnd",
-        "timeoutSec": 2
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /media/aditya/STUDY/projects/Claude_traffic/hw_light.py SessionEnd",
+            "timeout": 2
+          }
+        ]
       }
     ]
   }
