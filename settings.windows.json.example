@@ -8,7 +8,7 @@
             "command": "py",
             "args": [
               "-3",
-              "C:\\Users\\graml\\Downloads\\Claude_traffic\\hw_light.py",
+              "E:\\projects\\Claude_traffic\\hw_light.py",
               "UserPromptSubmit"
             ]
           }
@@ -24,7 +24,7 @@
             "command": "py",
             "args": [
               "-3",
-              "C:\\Users\\graml\\Downloads\\Claude_traffic\\hw_light.py",
+              "E:\\projects\\Claude_traffic\\hw_light.py",
               "PermissionRequest"
             ]
           }
@@ -39,8 +39,98 @@
             "command": "py",
             "args": [
               "-3",
-              "C:\\Users\\graml\\Downloads\\Claude_traffic\\hw_light.py",
+              "E:\\projects\\Claude_traffic\\hw_light.py",
               "Notification"
+            ]
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py",
+            "args": [
+              "-3",
+              "E:\\projects\\Claude_traffic\\hw_light.py",
+              "SessionStart"
+            ]
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py",
+            "args": [
+              "-3",
+              "E:\\projects\\Claude_traffic\\hw_light.py",
+              "SessionEnd"
+            ]
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py",
+            "args": [
+              "-3",
+              "E:\\projects\\Claude_traffic\\hw_light.py",
+              "SubagentStart"
+            ]
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py",
+            "args": [
+              "-3",
+              "E:\\projects\\Claude_traffic\\hw_light.py",
+              "SubagentStop"
+            ]
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py",
+            "args": [
+              "-3",
+              "E:\\projects\\Claude_traffic\\hw_light.py",
+              "PreCompact"
+            ]
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py",
+            "args": [
+              "-3",
+              "E:\\projects\\Claude_traffic\\hw_light.py",
+              "PostCompact"
             ]
           }
         ]
@@ -55,7 +145,7 @@
             "command": "py",
             "args": [
               "-3",
-              "C:\\Users\\graml\\Downloads\\Claude_traffic\\hw_light.py",
+              "E:\\projects\\Claude_traffic\\hw_light.py",
               "PreToolUse"
             ]
           }
@@ -71,7 +161,7 @@
             "command": "py",
             "args": [
               "-3",
-              "C:\\Users\\graml\\Downloads\\Claude_traffic\\hw_light.py",
+              "E:\\projects\\Claude_traffic\\hw_light.py",
               "PostToolUse"
             ]
           }
@@ -86,7 +176,7 @@
             "command": "py",
             "args": [
               "-3",
-              "C:\\Users\\graml\\Downloads\\Claude_traffic\\hw_light.py",
+              "E:\\projects\\Claude_traffic\\hw_light.py",
               "Stop"
             ]
           }
