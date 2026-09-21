@@ -27,7 +27,7 @@ def simulate_turn():
     run_hook("PreToolUse", {"tool_name": "Edit", "file": "auth.py"})
     time.sleep(3.5)
 
-    print(" -> OFF (Turn complete)\n")
+    print(" -> OFF + TWO BEEPS (Turn complete)\n")
     run_hook("Stop", {})
 
 def simulate_tokens_exhausted():
@@ -43,7 +43,7 @@ def main():
         print("==========================================")
         print("  CLAUDE TRAFFIC LIGHT TESTER")
         print("==========================================")
-        print("1. Test standard run (Yellow -> Blue -> Off)")
+        print("1. Test standard run (Yellow + 3 beeps -> Blue -> Off + 2 beeps)")
         print("2. Test Out of Tokens error (Red)")
         print("3. Manual send (Y, B, R, O)")
         print("q. Exit")

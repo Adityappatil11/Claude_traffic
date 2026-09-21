@@ -32,7 +32,7 @@ char incomingPacket[255];
 #define PIN_BLUE   D5
 #define PIN_BUZZER D6
 
-enum State { IDLE, WAITING, RUNNING, OUT_OF_TOKENS };
+enum State { IDLE, WAITING, RUNNING, COMPLETE, OUT_OF_TOKENS };
 State currentState = IDLE;
 
 void setLEDs(bool red, bool yellow, bool blue) {
@@ -61,6 +61,17 @@ void longBeep() {
   digitalWrite(PIN_BUZZER, LOW);
 }
 
+void completionBeep() {
+  for (int i = 0; i < 2; i++) {
+    digitalWrite(PIN_BUZZER, HIGH);
+    delay(120);
+    digitalWrite(PIN_BUZZER, LOW);
+    if (i == 0) {
+      delay(100);
+    }
+  }
+}
+
 void updateLED() {
   switch (currentState) {
     case WAITING:
@@ -74,6 +85,12 @@ void updateLED() {
     case OUT_OF_TOKENS:
       setLEDs(true, false, false);   // Red
       longBeep();                    // Long Warning Beep
+      break;
+
+    case COMPLETE:
+      setLEDs(false, false, false);  // Work finished: LEDs off
+      completionBeep();              // Two short completion beeps
+      currentState = IDLE;
       break;
 
     case IDLE:
@@ -171,6 +188,7 @@ void loop() {
         case 'Y': currentState = WAITING; break;
         case 'B': currentState = RUNNING; break;
         case 'R': currentState = OUT_OF_TOKENS; break;
+        case 'C': currentState = COMPLETE; break;
         case 'O': currentState = IDLE; break;
         default: break;
       }

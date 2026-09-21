@@ -64,7 +64,9 @@ def main():
         send_udp('Y')  # Yellow
     elif event_type in ["PreToolUse", "PostToolUse", "SessionStart", "SubagentStart"]:
         send_udp('B')  # Blue
-    elif event_type in ["Stop", "SessionEnd", "SubagentStop"]:
+    elif event_type in ["Stop", "SessionEnd"]:
+        send_udp('C')  # Complete: LEDs off with two short beeps
+    elif event_type == "SubagentStop":
         send_udp('O')  # Off
     elif event_type in ["Interrupt", "PreCompact", "PostCompact"]:
         send_udp('R')  # Red

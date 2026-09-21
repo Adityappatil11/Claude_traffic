@@ -8,9 +8,10 @@ A physical status indicator with LED states and audio buzzer alerts for [Claude 
 
 | State | LED Color | Buzzer Pattern | Trigger |
 | :--- | :--- | :--- | :--- |
-| **Prompt Dispatched / Action Needed** | 🟡 Yellow | 1 Short Beep (120ms) | `UserPromptSubmit`, `PermissionRequest`, `Notification` |
+| **Prompt Dispatched / Action Needed** | 🟡 Yellow | 3 Short Beeps (120ms each) | `UserPromptSubmit`, `PermissionRequest`, `Notification` |
 | **Tool Execution** | 🔵 Blue | Silent | `PreToolUse`, `PostToolUse` (Edit, Bash, Read) |
-| **Idle / Ready** | ⚫ Off | Silent | `Stop` |
+| **Prompt Completed** | ⚫ Off | 2 Short Beeps (120ms each) | `Stop`, `SessionEnd` |
+| **Idle / Manual Off** | ⚫ Off | Silent | Manual `off` command |
 | **Context Limit / Out of Tokens** | 🔴 Red | 1 Long Alarm (800ms) | Context window $\ge 95\%$ or `stop_reason == "max_tokens"` |
 
 ---
@@ -57,20 +58,20 @@ Plug your NodeMCU board into your computer and find the active serial port:
 #### Linux
 
 ```bash
-# List connected serial devices
-ls -l /dev/ttyUSB* /dev/ttyACM* 2>/dev/null
+# Confirm that the NodeMCU is available as /dev/ttyUSB0
+sudo ls -l /dev/ttyUSB* /dev/ttyACM* 2>/dev/null
+
+# Give the current machine session access to the board
+sudo chmod 666 /dev/ttyUSB0
 
 # Or view kernel hardware detection logs
 dmesg | grep -i tty
-
 ```
 
 > **Important Linux Fixes:**
-> 1. **Permission Denied:** Add your user to the `dialout` group or grant read/write permissions:
+> 1. **Permission Denied:** The `chmod` command above is temporary and may need to be repeated after reconnecting or restarting the board. For permanent access, add your user to `dialout`, then log out and back in:
 > ```bash
 > sudo usermod -a -G dialout $USER
-> sudo chmod 666 /dev/ttyUSB0
-> 
 > ```
 > 
 > 
@@ -110,27 +111,37 @@ WifiCredential wifiCredentials[] = {
 The ESP8266 tries the profiles in order. It uses `192.168.0.200` on Vishwa and `192.168.31.200` on Gramle_Jio.
 
 
-2. Compile the binary:
+2. From the project directory, compile the binary:
 ```bash
 arduino-cli compile --fqbn esp8266:esp8266:nodemcuv2 --output-dir ./build firmware/
-
 ```
 
+3. Confirm the board is connected and make the serial port accessible:
 
-3. **Put the board into Bootloader Mode:**
+```bash
+sudo ls -l /dev/ttyUSB* /dev/ttyACM* 2>/dev/null
+sudo chmod 666 /dev/ttyUSB0
+```
+
+4. Flash the ESP8266 using the settings verified with this board:
+
+```bash
+python3 -m esptool --chip esp8266 --port /dev/ttyUSB0 --baud 57600 --no-stub write-flash 0x0 ./build/firmware.ino.bin
+```
+
+A successful flash ends with `Verifying written data...` followed by `Hard resetting via RTS pin...`.
+
+5. If esptool cannot connect automatically, put the board into **Bootloader Mode** and run the flash command again:
+
 * Press and hold the physical **`FLASH`** (or `BOOT`) button.
 * Tap the physical **`RST`** button once.
 * Release the **`FLASH`** button.
 
+#### Windows flashing
 
-4. Flash the binary:
 ```bash
-# Linux / macOS
-python3 -m esptool --port /dev/ttyUSB0 --baud 115200 --no-stub --before no-reset --after no-reset write-flash 0x0 ./build/firmware.ino.bin
-
 # Windows (replace COM3 with your port)
 python -m esptool --port COM3 --baud 115200 --no-stub --before no-reset --after no-reset write-flash 0x0 ./build/firmware.ino.bin
-
 ```
 
 
@@ -257,7 +268,7 @@ python3 hw_light.py PreToolUse
 # Red: interrupt / context warning
 python3 hw_light.py Interrupt
 
-# Off: session complete
+# Complete: LEDs off with two short beeps
 python3 hw_light.py Stop
 
 # Guided sequence: Yellow -> Blue -> Off, plus manual colour selection
@@ -278,7 +289,7 @@ py -3 .\hw_light.py PreToolUse
 # Red: interrupt / context warning
 py -3 .\hw_light.py Interrupt
 
-# Off: session complete
+# Complete: LEDs off with two short beeps
 py -3 .\hw_light.py Stop
 
 # Guided sequence: Yellow -> Blue -> Off, plus manual colour selection

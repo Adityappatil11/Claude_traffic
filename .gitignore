@@ -3,7 +3,7 @@
 .aider.tags.cache.v4/
 
 # Build artifacts & binaries
-build/
+build/ 
 *.bin
 *.elf
 *.map
